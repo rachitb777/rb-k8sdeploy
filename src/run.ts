@@ -42,7 +42,7 @@ async function installKubectl(version: string) {
 
 function checkClusterContext() {
     if (!process.env["KUBECONFIG"]) {
-        throw new Error('Cluster context not set. Use k8ssetcontext action to set cluster context');
+        core.warning('Unable to find KUBECONFIG. If Cluster context not set use k8ssetcontext action to set cluster context');
     }
 }
 
