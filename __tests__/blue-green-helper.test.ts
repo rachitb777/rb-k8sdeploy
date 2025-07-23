@@ -14,6 +14,7 @@ const inputParamMock = mocked(inputParam, true);
 var deploymentYaml = "";
 
 import * as blueGreenHelper from '../src/utilities/strategy-helpers/blue-green-helper';
+import { isServiceSelectorSubsetOfMatchLabel } from '../src/utilities/strategy-helpers/blue-green-helper';
 import * as blueGreenHelperService from '../src/utilities/strategy-helpers/service-blue-green-helper';
 import * as blueGreenHelperIngress from '../src/utilities/strategy-helpers/ingress-blue-green-helper';
 import * as blueGreenHelperSMI from '../src/utilities/strategy-helpers/smi-blue-green-helper';
@@ -773,5 +774,32 @@ test("getServiceSelector() - return false if spec selector does not exist", () =
 		}
 	}
 
-	expect(blueGreenHelper.getServiceSelector(input)).toBeFalsy();
+        expect(blueGreenHelper.getServiceSelector(input)).toBeFalsy();
+});
+
+test('isServiceSelectorSubsetOfMatchLabel() - returns true for matching labels', () => {
+        const serviceSelector = {
+                'app': 'testapp',
+                'k8s.deploy.color': 'green'
+        };
+        const matchLabels = {
+                'app': 'testapp',
+                'k8s.deploy.color': 'green',
+                'version': 'v1'
+        };
+
+        expect(isServiceSelectorSubsetOfMatchLabel(serviceSelector, matchLabels)).toBeTruthy();
+});
+
+test('isServiceSelectorSubsetOfMatchLabel() - returns false for different labels', () => {
+        const serviceSelector = {
+                'app': 'testapp',
+                'k8s.deploy.color': 'green'
+        };
+        const matchLabels = {
+                'app': 'testapp',
+                'k8s.deploy.color': 'blue'
+        };
+
+        expect(isServiceSelectorSubsetOfMatchLabel(serviceSelector, matchLabels)).toBeFalsy();
 });
